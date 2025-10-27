@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Event Portal</title>
+</head>
+<body style="font-family: Arial; text-align: center; margin-top: 50px;">
+  <h1>College Event Registration Portal</h1>
+
+  <h3>Select Role:</h3>
+  <button onclick="showForm('admin')">Admin</button>
+  <button onclick="showForm('student')">Student</button>
+
+  <div id="formContainer" style="margin-top: 30px;"></div>
+
+  <script>
+    function showForm(role) {
+      const container = document.getElementById('formContainer');
+      if (role === 'admin') {
+        container.innerHTML = `
+          <h3>Create Event</h3>
+          <form onsubmit="submitForm(event, '/createEvent')">
+            <input type="text" id="eventName" placeholder="Event Name" required><br><br>
+            <input type="text" id="eventDate" placeholder="Event Date" required><br><br>
+            <button type="submit">Create</button>
+          </form>
+        `;
+      } else {
+        container.innerHTML = `
+          <h3>Register for Event</h3>
+          <form onsubmit="submitForm(event, '/register')">
+            <input type="text" id="studentName" placeholder="Student Name" required><br><br>
+            <input type="text" id="eventName" placeholder="Event Name" required><br><br>
+            <button type="submit">Register</button>
+          </form>
+        `;
+      }
+    }
+
+    async function submitForm(e, endpoint) {
+      e.preventDefault();
+      const formData = {
+        studentName: document.getElementById('studentName')?.value,
+        eventName: document.getElementById('eventName')?.value,
+        eventDate: document.getElementById('eventDate')?.value
+      };
+      const res = await fetch(`http://localhost:3000${endpoint}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(formData)
+      });
+      const data = await res.text();
+      alert(data);
+    }
+  </script>
+</body>
+</html>
